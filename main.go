@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/playwright-community/playwright-go"
+	"go.mau.fi/libsignal/logger"
 )
 
 const baseBCABisnis = "https://vpn.klikbca.com/+CSCOE+/logon.html"
@@ -550,4 +551,31 @@ func logoutBCABisnis(page playwright.Page) {
 			log.Println("Gagal klik btnLogout :", err)
 		}
 	}
+}
+
+func main() {
+	var (
+		corpid, username, password, norek string
+		totalCekHari                      int64
+	)
+
+	pw, err := playwright.Run()
+	if err != nil {
+		log.Println(err)
+	}
+
+	browser, err := pw.WebKit.Launch()
+	if err != nil {
+		log.Println(err)
+	}
+
+	page, err := browser.NewPage()
+	if err != nil {
+		logger.Debug(err)
+	}
+
+	page = loginBCABisnis(page, corpid, username, password)
+	page = loginBCABisnis2(page, corpid, username, password)
+	page = menuBCABisnis(page, norek, totalCekHari)
+	logoutBCABisnis(page)
 }
